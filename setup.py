@@ -1,8 +1,8 @@
 from setuptools import setup
 
 setup(
-    name='flaskr',
-    packages=['flaskr'],
+    name='WordFrequenciesWeb',
+    packages=['WordFrequenciesWeb'],
     include_package_data=True,
     install_requires=[
         'flask',
