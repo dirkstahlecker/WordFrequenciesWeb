@@ -1,5 +1,5 @@
 import datetime
-from WordDictBase import WordDictBase
+from .WordDictBase import WordDictBase
 
 class WordDict(WordDictBase):
     #{ word : { 'count': count , 'lastDate': last occurence , 'firstDate': first occurence , 'wasUpper': started with uppercase letter } }

@@ -1,7 +1,7 @@
-from WordDict import WordDict
-from Helper import Helper
+from .WordDict import WordDict
+from .Helper import Helper
 import unittest
-from WordFrequenciesClass import WordFrequencies
+from .WordFrequenciesClass import WordFrequencies
 from datetime import datetime
 import argparse
 from io import StringIO

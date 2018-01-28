@@ -9,14 +9,14 @@ matplotlib.use('TkAgg') #necessary for virtualenv with python3 not installed as 
 import matplotlib.pyplot as plt
 import datetime
 from .Helper import Helper
-from .Preferences import Preferences
-from .PrintHelper import PrintHelper
+from Preferences import Preferences
+from PrintHelper import PrintHelper
 import locale
 import hashlib
-from .WordDict import WordDict
-from .WordsPerDayDict import WordsPerDayDict
+from WordDict import WordDict
+from WordsPerDayDict import WordsPerDayDict
 from enum import Enum
-from .WordClass import WordClass
+from WordClass import WordClass
 
 #Enum to carry the different settings for printing
 class PrintOption(Enum):

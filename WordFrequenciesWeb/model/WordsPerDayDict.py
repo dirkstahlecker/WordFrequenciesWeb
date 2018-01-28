@@ -1,5 +1,5 @@
 import datetime
-from WordDictBase import WordDictBase
+from .WordDictBase import WordDictBase
 
 class WordsPerDayDict(WordDictBase):
     #{ word : { 'count': count , 'lastOccurence': last occurence } } only counts one occurence per day

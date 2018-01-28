@@ -1,4 +1,3 @@
-
 class WordDictBase():
     internalDict = {}
 

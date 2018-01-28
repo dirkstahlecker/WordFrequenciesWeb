@@ -1,5 +1,5 @@
-from Preferences import Preferences
-from Helper import Helper
+from .Preferences import Preferences
+from .Helper import Helper
 
 class PrintHelper:
     prefs = None
