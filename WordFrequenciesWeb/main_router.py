@@ -1,11 +1,27 @@
 import os
 import sqlite3
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, Response
 from .model.WordFrequenciesClass import WordFrequencies
+# from flaskext.xmlrpc import XMLRPCHandler, Fault
+from jsonrpcserver import methods
 
 app = Flask(__name__) # create the application instance
 app.config.from_object(__name__) # load config from this file, flaskr.py
 
+####################################
+# RPC
+# handler = XMLRPCHandler('api')
+# handler.connect(app, '/api')
+
+# @handler.register
+# def hello(name="world"):
+#     if not name:
+#         raise Fault("unknown_recipient", "I need someone to greet!")
+#     return "Hello, %s!" % name
+
+####################################
+
+wf = WordFrequencies()
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
@@ -46,7 +62,7 @@ def initdb_command():
     init_db()
     print('Initialized the database.')
 
-@app.route('/')
+@app.route('/', methods=['POST'])
 def show_entries():
     db = get_db()
     cur = db.execute('select date, text from entries order by id desc')
@@ -58,8 +74,10 @@ def add_entry():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    db.execute('insert into entries (date, text) values (?, ?)',
-                 [request.form['date'], request.form['text']])
+
+    markedUpText = wf.addMarkupToText(request.form['text'])
+
+    db.execute('insert into entries (date, text) values (?, ?)', [request.form['date'], markedUpText])
     db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
@@ -84,5 +102,19 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
+
+
+
+@methods.add
+def ping():
+    return 'pong'
+
+@app.route('/rpc', methods=['POST'])
+def rpc_main():
+    print('in rpc_main')
+    req = request.get_data().decode()
+    response = methods.dispatch(req)
+    print(response)
+    return Response(str(response), response.http_status, mimetype='application/json')
 
 

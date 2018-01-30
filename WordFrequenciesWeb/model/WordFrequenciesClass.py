@@ -457,6 +457,16 @@ class WordFrequencies:
         self.mainSetup(args)
         self.runMainLoop()
 
+    def mainSetupWeb(self, fileUrl):
+        #TODO: deal with preferences
+        self.prefs.VERBOSE = False
+        self.prefs.COMBINE_PLURALS = False
+        self.prefs.GUESS_NAMES = False
+        self.prefs.DO_MARK_UNDER = False
+
+        self.makeNamesSet()
+        # self.readFile(fileUrl)
+
     #break apart the main function for testing
     def mainSetup(self, args):
         locale.setlocale(locale.LC_ALL, 'en_US')
@@ -603,6 +613,35 @@ class WordFrequencies:
             print('Unknown command.')
         return True
 
+###############################################################################################
+# Web Control
+###############################################################################################
+
+    #Example input:
+    #We walked back to C5 with the intent to play board games with Clio. Lexi, Ria, and Andrea were painting on their mural in the hallway 
+    #and made a lot of progress on it. It looked pretty good. I talked with them for a little while while they painted and Andrea also watched the NHL all-star game.
+    def addMarkupToText(self, text_in):
+        markedUpText = ''
+        words = line.split(' ')
+        for currentIndex in range(len(words) - 1):
+            word_str = words[currentIndex]
+            (word_beforeStuff, word_str, word_afterStuff) = Helper.cleanWordForInitialAdd(word_str)
+
+            if Helper.cleanWord(word_str, stripApostropheS=True) in self.namesSet:
+                wasPluralWithApostrophe = False
+                word_str = word_str.translate(str.maketrans({'‘':"'",'’':"'"})) #need to change from smart quotes to regular
+                if word_str.endswith("'s"):
+                    word_str = word_str[:-2]
+                    wasPluralWithApostrophe = True
+                word_class = self.getMarkUnderWord(word_str, words, currentIndex, wasPluralWithApostrophe)
+            else:
+                word_class = WordClass.addWordOrMarkup(word_str)
+            allWords.append(word_class)
+            markedUpText += word_beforeStuff + word_class.printMarkup() + word_afterStuff + ' ' #need to manually add a space since they're removed in the split
+            #TODO: add spaces back only where they were taken from
+        return markedUpText
+
+
 
 
 
@@ -669,17 +708,11 @@ class Markup():
         markupFile.close()
         allWords = []
         line = f.readline()
-        # last20Words = [] #maintains the last 20 words to give the user context for the name, which is a rolling list of 20 words ending in the particular name of note
         while line != '':
             markupFile = open(self.markUpFilePath, 'a')
             words = line.split(' ')
-            # last20Words = []
             for currentIndex in range(len(words) - 1):
                 word_str = words[currentIndex]
-                # if len(last20Words) >= 20:
-                #     last20Words.pop(0)
-                # last20Words.append(word_str)
-
                 (word_beforeStuff, word_str, word_afterStuff) = Helper.cleanWordForInitialAdd(word_str)
 
                 if Helper.cleanWord(word_str, stripApostropheS=True) in self.namesSet:
